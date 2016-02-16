@@ -5,13 +5,13 @@ var express = require('express'),
 
 app.get('/*', function(req, res) {
     var response = {
-        "ip": req.headers['x-forwarded-for'],
-        "language": req.headers['accept-language'].split(',').splice(0,1).join(''),
-        "OS": req.headers['user-agent'].split('(').splice(1,1).join('').split(';').splice(0,1).join('')
-    };
-    res.send(response);
+        
+    }
+    res.send(req.url);
 });
 
-app.listen(8080, function() {
-    console.log("Node is listening on port 8080");
+
+var port = process.env.PORT || 8080;
+app.listen(port,  function () {
+	console.log('Node.js listening on port ' + port + '...');
 });
