@@ -11,19 +11,26 @@ mongo.connect('mongodb://localhost:27017/urls', function(err, db) {
         console.log("Can't connect to DB!");
     } else {
         console.log("Connected to DB!");
-   
+        var userCreated = db.collection('userCreated');
         app.use('/*', function(req, res) {
+            
             if(req.params['0'].match(regex)) {
-                db.collection('userCreated').find({ "original url": req.params['0'] }).limit(1).toArray(function(err, result) {
+               userCreated.find({ "original url": req.params['0'] }).limit(1).toArray(function(err, result) {
                 if (err) {
                     throw err;
                     }
                 if(result.length === 0) {
-                    db.collection('userCreated').insert(
+                    var shortUrl = "http://url-shortener-microservice-timrizzo.c9users.io/" + Math.floor(Math.random() * 100 + 1);
+                   if(userCreated.find({ "short url" : shortUrl }).toArray().length === undefined) {
+                       userCreated.insert(
                         {
                             "original url": req.params['0'],
-                            "short url": "http://url-shortener-microservice-timrizzo.c9users.io/short"
-                        });
+                            "short url": shortUrl
+                        }); 
+                    } else {
+                        console.log("Duplicate!" + userCreated.find({ "short url" : shortUrl }).toArray().length);
+                    }
+                    
                     urls = {
                     	"original url": req.params['0'],
                         "short url": "",
